@@ -15,7 +15,7 @@ class ControladorUsuario {
 
     private final UsuarioRepositorio repositorio;
 
-    EmployeeController(UsuarioRepositorio repositorio) {
+    ControladorUsuario(UsuarioRepositorio repositorio) {
         this.repositorio = repositorio;
     }
 //Agregar root
