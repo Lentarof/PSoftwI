@@ -1,9 +1,11 @@
 package com.example.demo;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.aspectj.weaver.Iterators;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +27,26 @@ class ControladorUsuario {
     }
 //Agregar root
 
+    /*
     @GetMapping("/usuarios")
     List<Usuario> all() {
         return repositorio.findAll();
     }
+    */
+
+    @GetMapping("/usuarios")
+    Resources<Resource<Usuario>> all() {
+
+        List<Resource<Usuario>> usuarios = repositorio.findAll().stream()
+                .map(usuario -> new Resource<>(usuario,
+                        linkTo(methodOn(ControladorUsuario.class).one(usuario.getId())).withSelfRel(),
+                        linkTo(methodOn(ControladorUsuario.class).all()).withRel("usuarios")))
+                .collect(Collectors.toList());
+
+        return new Resources<>(usuarios,
+                linkTo(methodOn(ControladorUsuario.class).all()).withSelfRel());
+    }
+
 
     @PostMapping("/usuarios")
     Usuario nuevoUsuario(@RequestBody Usuario nuevoUsuario) {
@@ -36,12 +54,14 @@ class ControladorUsuario {
     }
 
     // item unico
-    /*@GetMapping("/usuarios/{id}")
+/*
+    @GetMapping("/usuarios/{id}")
     Usuario oneUsuario(@PathVariable Long id) {
 
         return repositorio.findById(id)
                 .orElseThrow(() -> new ExcepcionUsuarioNoEncontrado(id));
-    }*/
+    }
+*/
     @GetMapping("/usuarios/{id}")
     Resource<Usuario> one(@PathVariable Long id) {
 
@@ -52,6 +72,8 @@ class ControladorUsuario {
                 linkTo(methodOn(ControladorUsuario.class).one(id)).withSelfRel(),
                 linkTo(methodOn(ControladorUsuario.class).all()).withRel("usuarios"));
     }
+
+
 
     @PutMapping("/usuarios/{id}")
         Usuario replaceUsuario(@RequestBody Usuario nuevoUsuario, @PathVariable Long id) {
