@@ -14,8 +14,8 @@ public class CargarDatos {
     @Bean
     CommandLineRunner initDatabase(UsuarioRepositorio repositorio) {
         return args -> {
-            log.info("Precarga " + repositorio.save(new Usuario("Romulo", "Gerente de MNE")));
-            log.info("Precarga " + repositorio.save(new Usuario("Abel", "Gerente de MNA")));
+            log.info("Precarga " + repositorio.save(new Usuario("Romulo","Teran", "Gerente de MNE")));
+            log.info("Precarga " + repositorio.save(new Usuario("Abel","Tenaz", "Gerente de MNA")));
         };
     }
 }
