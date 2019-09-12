@@ -9,13 +9,21 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-public class CargarDatos {
+class CargarDatos {
 
     @Bean
-    CommandLineRunner initDatabase(UsuarioRepositorio repositorio) {
+    CommandLineRunner initDatabase(UsuarioRepositorio repositorio, OrdenRepositorio ordenRepositorio) {
         return args -> {
             log.info("Precarga " + repositorio.save(new Usuario("Romulo","Teran", "Gerente de MNE")));
             log.info("Precarga " + repositorio.save(new Usuario("Abel","Tenaz", "Gerente de MNA")));
+
+            ordenRepositorio.save(new Orden("MacBook Pro", Estado.COMPLETED));
+            ordenRepositorio.save(new Orden("iPhone", Estado.IN_PROGRESS));
+
+            ordenRepositorio.findAll().forEach(orden -> {
+                log.info("Precarga " + orden);
+            });
+
         };
     }
 }
