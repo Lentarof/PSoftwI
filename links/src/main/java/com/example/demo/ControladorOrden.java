@@ -60,4 +60,19 @@ public class ControladorOrden {
                 .created(linkTo(methodOn(ControladorOrden.class).one(nuevaOrden.getId())).toUri())
                 .body(assembler.toResource(nuevaOrden));
     }
+
+    @DeleteMapping("/ordenes/{id}/cancel")
+    ResponseEntity<ResourceSupport> cancel(@PathVariable Long id) {
+
+        Orden orden = ordenRepositorio.findById(id).orElseThrow(() -> new ExcepcionOrdenNoEncontrada(id));
+
+        if (orden.getEstado() == Estado.IN_PROGRESS) {
+            orden.setEstado(Estado.CANCELLED);
+            return ResponseEntity.ok(assembler.toResource(ordenRepositorio.save(orden)));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new VndErrors.VndError("Metodo no permitido", " No puede cancelar la orden que esta en " + orden.getEstado() + " estado"));
+    }
 }
