@@ -146,8 +146,16 @@ ResponseEntity<?> replaceEmployee(@RequestBody Usuario nuevoUsuario, @PathVariab
             .created(new URI(resource.getId().expand().getHref()))
             .body(resource);
 }
-    @DeleteMapping("/usuarios/{id}")
+  /*  @DeleteMapping("/usuarios/{id}")
     void deleteUsuario(@PathVariable Long id) {
         repositorio.deleteById(id);
     }
+   */
+  @DeleteMapping("/usuarios/{id}")
+  ResponseEntity<?> deleteUsuario(@PathVariable Long id) {
+
+      repositorio.deleteById(id);
+
+      return ResponseEntity.noContent().build();
+  }
 }
