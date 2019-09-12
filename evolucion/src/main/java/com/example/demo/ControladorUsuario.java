@@ -109,7 +109,7 @@ class ControladorUsuario {
         return assembler.toResource(usuario);
     }
 
-
+/*
     @PutMapping("/usuarios/{id}")
     Usuario replaceUsuario(@RequestBody Usuario nuevoUsuario, @PathVariable Long id) {
 
@@ -125,7 +125,27 @@ class ControladorUsuario {
                 });
 
     }
+*/
+@PutMapping("/usuarios/{id}")
+ResponseEntity<?> replaceEmployee(@RequestBody Usuario nuevoUsuario, @PathVariable Long id) throws URISyntaxException {
 
+    Usuario actualizarUsuario = repositorio.findById(id)
+            .map(usuario -> {
+                usuario.setNombre(nuevoUsuario.getNombre());
+                usuario.setCargo(nuevoUsuario.getCargo());
+                return repositorio.save(usuario);
+            })
+            .orElseGet(() -> {
+                nuevoUsuario.setId(id);
+                return repositorio.save(nuevoUsuario);
+            });
+
+    Resource<Usuario> resource = assembler.toResource(actualizarUsuario);
+
+    return ResponseEntity
+            .created(new URI(resource.getId().expand().getHref()))
+            .body(resource);
+}
     @DeleteMapping("/usuarios/{id}")
     void deleteUsuario(@PathVariable Long id) {
         repositorio.deleteById(id);
