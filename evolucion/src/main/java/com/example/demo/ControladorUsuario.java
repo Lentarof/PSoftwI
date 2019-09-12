@@ -22,8 +22,12 @@ class ControladorUsuario {
 
     private final UsuarioRepositorio repositorio;
 
-    ControladorUsuario(UsuarioRepositorio repositorio) {
+    private final UsuarioRecursoAssembler assembler;
+
+    ControladorUsuario(UsuarioRepositorio repositorio,
+                       UsuarioRecursoAssembler assembler) {
         this.repositorio = repositorio;
+        this.assembler = assembler;
     }
 //Agregar root
 
@@ -33,7 +37,7 @@ class ControladorUsuario {
         return repositorio.findAll();
     }
     */
-
+/*
     @GetMapping("/usuarios")
     Resources<Resource<Usuario>> all() {
 
@@ -46,8 +50,18 @@ class ControladorUsuario {
         return new Resources<>(usuarios,
                 linkTo(methodOn(ControladorUsuario.class).all()).withSelfRel());
     }
+ */
+    @GetMapping("/usuarios")
+    Resources<Resource<Usuario>> all() {
 
+        List<Resource<Usuario>> usuarios = repositorio.findAll().stream()
+                .map(assembler::toResource)
+                .collect(Collectors.toList());
 
+        return new Resources<>(usuarios,
+                linkTo(methodOn(ControladorUsuario.class).all()).withSelfRel());
+    }
+//end root
     @PostMapping("/usuarios")
     Usuario nuevoUsuario(@RequestBody Usuario nuevoUsuario) {
         return repositorio.save(nuevoUsuario);
@@ -62,7 +76,7 @@ class ControladorUsuario {
                 .orElseThrow(() -> new ExcepcionUsuarioNoEncontrado(id));
     }
 */
-    @GetMapping("/usuarios/{id}")
+ /*   @GetMapping("/usuarios/{id}")
     Resource<Usuario> one(@PathVariable Long id) {
 
         Usuario usuario = repositorio.findById(id)
@@ -72,7 +86,15 @@ class ControladorUsuario {
                 linkTo(methodOn(ControladorUsuario.class).one(id)).withSelfRel(),
                 linkTo(methodOn(ControladorUsuario.class).all()).withRel("usuarios"));
     }
+*/
+    @GetMapping("/usuarios/{id}")
+    Resource<Usuario> one(@PathVariable Long id) {
 
+        Usuario usuario = repositorio.findById(id)
+                .orElseThrow(() -> new ExcepcionUsuarioNoEncontrado(id));
+
+        return assembler.toResource(usuario);
+    }
 
 
     @PutMapping("/usuarios/{id}")
