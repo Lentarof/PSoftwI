@@ -75,4 +75,19 @@ public class ControladorOrden {
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(new VndErrors.VndError("Metodo no permitido", " No puede cancelar la orden que esta en " + orden.getEstado() + " estado"));
     }
+
+    @PutMapping("/ordenes/{id}/complete")
+    ResponseEntity<ResourceSupport> complete(@PathVariable Long id) {
+
+        Orden orden = ordenRepositorio.findById(id).orElseThrow(() -> new  ExcepcionOrdenNoEncontrada(id));
+
+        if (orden.getEstado() == Estado.IN_PROGRESS) {
+            orden.setEstado(Estado.COMPLETED);
+            return ResponseEntity.ok(assembler.toResource(ordenRepositorio.save(orden)));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new VndErrors.VndError(" Metodo no permitido", "No puede completar la orden que esta en  " + orden.getEstado() + " estado"));
+    }
 }
