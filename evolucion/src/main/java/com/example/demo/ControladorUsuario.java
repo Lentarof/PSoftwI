@@ -1,11 +1,14 @@
 package com.example.demo;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.aspectj.weaver.Iterators;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,11 +65,21 @@ class ControladorUsuario {
                 linkTo(methodOn(ControladorUsuario.class).all()).withSelfRel());
     }
 //end root
-    @PostMapping("/usuarios")
+
+ /*   @PostMapping("/usuarios")
     Usuario nuevoUsuario(@RequestBody Usuario nuevoUsuario) {
         return repositorio.save(nuevoUsuario);
     }
+ */
+ @PostMapping("/usuarios")
+ ResponseEntity<?> newEmployee(@RequestBody Usuario nuevoUsuario) throws URISyntaxException {
 
+     Resource<Usuario> resource = assembler.toResource(repositorio.save(nuevoUsuario));
+
+     return ResponseEntity
+             .created(new URI(resource.getId().expand().getHref()))
+             .body(resource);
+ }
     // item unico
 /*
     @GetMapping("/usuarios/{id}")
