@@ -25,7 +25,7 @@ public class ControladorOrden {
     private final OrdenRepositorio ordenRepositorio;
     private final OrdenRecursoAssembler assembler;
 
-    ControladorOrden(OrdenRepositorio orderRepository,
+    ControladorOrden(OrdenRepositorio ordenRepositorio,
                     OrdenRecursoAssembler assembler) {
 
         this.ordenRepositorio = ordenRepositorio;
